@@ -8,15 +8,16 @@ import json
 from typing import Union, Optional
 
 class AsyncBaleOTP:
-    def __init__(self, username: str, secret: str):
+    def __init__(self, username: str, secret: str, base_url: str = "https://safir.bale.ai/api/v2/"):
         self.username = username
         self.secret = secret
+        self.base_url = base_url
     
     def to_sync_client(self):
-        return BaleOTP(self.username, self.secret)
+        return BaleOTP(self.username, self.secret, self.base_url)
     
     async def get_token(self) -> str:
-        sign_url = "http://safir.bale.ai/api/v2/auth/token"
+        sign_url = self.base_url+"auth/token"
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
             "User-Agent": "PostmanRuntime/7.43.0"
@@ -35,7 +36,7 @@ class AsyncBaleOTP:
     async def send_code(self, number: str, code: Union[str, int]) -> bool:
         try:
             token = await self.get_token()
-            send_url = "https://safir.bale.ai/api/v2/send_otp"
+            send_url = self.base_url+"send_otp"
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded",
                 "User-Agent": "PostmanRuntime/7.43.0",
