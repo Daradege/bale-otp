@@ -1,1 +1,0 @@
-isa dadash chetori
