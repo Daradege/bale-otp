@@ -6,6 +6,8 @@ if TYPE_CHECKING:
 import requests
 import json
 from typing import Union, Optional
+from random import randint
+from ..helpers import transform_number
 
 class BaleOTP:
     def __init__(self, username: str, secret: str, base_url: str = "https://safir.bale.ai/api/v2/"):
@@ -34,9 +36,10 @@ class BaleOTP:
         json_data = response.json()
         return json_data['access_token']
 
-    def send_code(self, number: str, code: Union[str, int]) -> bool:
-
+    def send_code(self, number: str, code: Optional[Union[str, int]] = None) -> bool:
         try:
+            if not code:
+                otp_code = randint(1000, 99999)
             token = self.get_token()
             send_url = self.base_url+"send_otp"
             headers = {
@@ -45,15 +48,14 @@ class BaleOTP:
                 "Authorization": f"Bearer {token}"
             }
             body = {
-                "phone": number,
-                "otp": code
+                "phone": transform_number(number),
+                "otp": code or otp_code
             }
             response = requests.post(
                 send_url, headers=headers, data=json.dumps(body))
             json_data = response.json()
-
             if 'balance' in json_data.keys():
-                return True
+                return True if code else otp_code
             return False
         except BaseException:
             return False

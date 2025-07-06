@@ -16,3 +16,5 @@ class UserNotFound(PbbOtpException):
 class PaymentRequired(PbbOtpException):
     pass
 
+class PhoneFormatError(PbbOtpException):
+    pass
